@@ -3,10 +3,20 @@ import random
 import subprocess
 import json
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
-TOKEN = "MTQ4MDQ3Nzk0MTczNjUzODExMw.GgQlHM.gMqLGbSelcLJZ5HGA2PQ9rxu_iCZkR6KjPjmEo"
+import os
+import threading
+from flask import Flask
+TOKEN = os.environ.get("TOKEN")
 CHANNEL_NAME = "トーク"
+app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return "musicbot is alive!"
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 
@@ -57,4 +67,6 @@ async def on_ready():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(post_music, "cron", hour=21, minute=00)
     scheduler.start()
+
+threading.Thread(target=run_web).start()
 client.run(TOKEN)
