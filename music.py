@@ -2,7 +2,7 @@ import os
 import random
 import requests
 
-WEBHOOK_URL = "ここにDiscordWebhookURL"
+WEBHOOK_URL = "https://discord.com/api/webhooks/1480898961744330803/XaOQtgiWgSepTzsQs_pP-zf69KAv0gtk5EMTFrptO8lh96_zHkqcNpcE8WHQdICohGW3"
 API_KEY = os.environ.get("YOUTUBE_API_KEY")
 
 
