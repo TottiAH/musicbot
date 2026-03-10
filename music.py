@@ -8,14 +8,15 @@ API_KEY = os.environ.get("YOUTUBE_API_KEY")
 def get_random_music():
     url = "https://www.googleapis.com/youtube/v3/search"
 
-    params = {
-        "part": "snippet",
-        "q": "music",
-        "type": "video",
-        "maxResults": 25,
-        "key": API_KEY
-    }
-
+   params = {
+    "part": "snippet",
+    "q": "hip hop chill music",
+    "type": "video",
+    "videoCategoryId": "10",
+    "maxResults": 25,
+    "regionCode": "US",
+    "key": API_KEY
+}
     response = requests.get(url, params=params)
 
     if response.status_code != 200:
