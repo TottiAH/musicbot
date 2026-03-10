@@ -18,6 +18,8 @@ def get_random_music():
     "key": API_KEY
 }
     response = requests.get(url, params=params)
+    print(response.status_code)
+    print(response.text)
 
     if response.status_code != 200:
         print("YouTube API error")
