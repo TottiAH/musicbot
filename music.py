@@ -1,34 +1,37 @@
-import random
 import subprocess
-import json
 import requests
 
 WEBHOOK_URL = "https://discord.com/api/webhooks/1480898961744330803/XaOQtgiWgSepTzsQs_pP-zf69KAv0gtk5EMTFrptO8lh96_zHkqcNpcE8WHQdICohGW3"
 
-def get_random_song():
-
+def get_song():
     cmd = [
         "yt-dlp",
-        "ytsearch:music",
-        "--get-title",
-        "--get-id"
+        "ytsearch1:music",
+        "--print", "%(title)s",
+        "--print", "https://www.youtube.com/watch?v=%(id)s",
+        "--skip-download"
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
 
-    lines = result.stdout.strip().split("\n")
+    if result.returncode != 0:
+        print("yt-dlp error:")
+        print(result.stderr)
+        return None
+
+    lines = [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
     if len(lines) < 2:
+        print("stdout was:")
+        print(result.stdout)
         return None
 
     title = lines[0]
-    video_id = lines[1]
-
-    url = f"https://www.youtube.com/watch?v={video_id}"
-
+    url = lines[1]
     return title, url
 
-song = get_random_song()
+
+song = get_song()
 
 if song:
     title, url = song
