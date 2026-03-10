@@ -14,9 +14,12 @@ def get_random_song():
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
+
     data = json.loads(result.stdout)
 
     entries = data.get("entries", [])
+    entries = [e for e in entries if isinstance(e, dict)]
+
     if not entries:
         return None
 
@@ -26,7 +29,6 @@ def get_random_song():
     url = video.get("webpage_url", "")
 
     return title, url
-
 
 song = get_random_song()
 
