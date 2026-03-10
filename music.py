@@ -19,19 +19,16 @@ def get_random_music():
         "key": API_KEY
     }
 
-    response = requests.get(url, params=params)
-    print(response.status_code)
-    print(response.text)
+    response = requests.get(url, params=params, timeout=20)
 
     if response.status_code != 200:
-        print("YouTube API error")
-        return None
+        return None, f"YouTube API error {response.status_code}: {response.text[:300]}"
 
     data = response.json()
     items = data.get("items", [])
 
     if not items:
-        return None
+        return None, "items が 0 件だった"
 
     video = random.choice(items)
 
@@ -39,19 +36,28 @@ def get_random_music():
     video_id = video["id"]["videoId"]
     video_url = f"https://www.youtube.com/watch?v={video_id}"
 
-    return title, video_url
+    return (title, video_url), None
 
 
-song = get_random_music()
-
-if song:
-    title, url = song
+if not API_KEY:
     message = {
-        "content": f"🎧 今日の音楽\n\n**{title}**\n{url}"
+        "content": "YOUTUBE_API_KEY が読めてない"
     }
 else:
-    message = {
-        "content": "音楽が見つからなかった"
-    }
+    song, error = get_random_music()
 
-requests.post(WEBHOOK_URL, json=message)
+    if error:
+        message = {
+            "content": error
+        }
+    elif song:
+        title, url = song
+        message = {
+            "content": f"🎧 今日の音楽\n\n**{title}**\n{url}"
+        }
+    else:
+        message = {
+            "content": "原因不明で song が取れなかった"
+        }
+
+requests.post(WEBHOOK_URL, json=message, timeout=20)
